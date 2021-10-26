@@ -66,5 +66,7 @@ def main(argv, argc):
             sys.exit(-1)
             
 if __name__ == "__main__":
-    argv = sys.argv.pop(0) # delete the first argument
-    main(argv, len(sys.argv)-1)
+    argv = sys.argv
+    argv.pop(0) # delete the first argument
+    argc = len(argv)
+    main(argv, argc)
