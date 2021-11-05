@@ -9,3 +9,7 @@ class InvalidArgumentsError(Exception):
 class CommandError(Exception):
     def __init__(self, message = "Unknown command"):
         super().__init__(message)
+
+class InvalidLine(Exception):
+    def __init__(self, message = None):
+        super().__init__(message)

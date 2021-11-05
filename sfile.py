@@ -1,8 +1,12 @@
+import os
+
 class smartedFile:
     def __init__(self, filename):
         self.filename = filename
+        self.permission = {"readable": os.access(self.filename, os.R_OK), "writable": os.access(self.filename, os.W_OK),
+                           "executable": os.access(self.filename, os.X_OK)}
 
-    def print(self, read_line):
+    def fprint(self, read_line):
         nl = 1
         with open(self.filename, 'r') as f:
             if read_line:
@@ -19,3 +23,15 @@ class smartedFile:
         else:
             with open(self.filename, 'w') as f:
                 f.write(to_insert)
+
+    # Used for checking line number
+    # If a line exist it returns 0
+    # Else it returns 1
+    
+    def check_nline(self, nline): 
+        with open(self.filename, "r") as f:
+            nl = len(f.read().split('\n'))
+            if nl < nline or 0 >= nline:
+                return 1
+            return 0
+

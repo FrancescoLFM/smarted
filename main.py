@@ -1,13 +1,9 @@
 import sys
 from sfile import smartedFile
-from exceptions import InvalidArgumentsError, CommandError
+from exceptions import *
+from var import *
 
 def main(argv, argc):
-    op_file = None
-    inserted = ''
-    c = None
-    is_listening = True
-
     try:
         if argc < 1:
             raise InvalidArgumentsError(f"Expected at least 1 argument, found {argc}")
@@ -25,16 +21,33 @@ def main(argv, argc):
         with open("a.txt", 'a+'):
             op_file = smartedFile("a.txt")
 
+    print("Welcome to smarted v1.0! Press h for help")
+    is_listening = True
+    inserted = ''
+    cl = 1
+
     while is_listening:
         try:
-            command = input(f"{op_file.filename} >> ")
+            command = input(f"{op_file.filename} ({cl})>> ")
             if 'p' in command:
                 if command == 'p':
-                    op_file.print(False)
+                    op_file.fprint(False)
                 elif command == "pn":
-                    op_file.print(True)
+                    op_file.fprint(True)
+                elif command == "pi":
+                    if inserted != '':
+                        print(inserted)
                 else:
                     raise CommandError
+            
+            elif 'l' in command:
+                newl = command.split('l')
+                nl = int(newl[1])
+                if not op_file.check_nline(nl):
+                    cl = nl
+                else:
+                    raise InvalidLine(f"Invalid selected line ({nl})")
+
             elif command == 'i':
                 try:
                     insert_mode = True
@@ -42,6 +55,7 @@ def main(argv, argc):
                     while insert_mode:
                         inserted += input() + '\n'
                 except KeyboardInterrupt:
+                    print()
                     insert_mode = False
             elif command == 'q':
                 if inserted == '':
@@ -55,10 +69,14 @@ def main(argv, argc):
             elif command == 'w':
                 op_file.write(inserted, False)
                 inserted = ''
+            elif command == 'h':
+                print(help_txt)
             else:
                 raise CommandError
         except CommandError as cerr:
             print(cerr, file=sys.stderr)
+        except InvalidLine as lerr:
+            print(lerr, file=sys.stderr)
         except KeyboardInterrupt:
             print("Keyboard Interrupt")
         except FileNotFoundError as ferr:
