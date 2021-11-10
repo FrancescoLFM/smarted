@@ -13,3 +13,8 @@ class CommandError(Exception):
 class InvalidLine(Exception):
     def __init__(self, message = None):
         super().__init__(message)
+
+class LanguageNotSupported(Exception):
+    def __init__(self, lang = None):
+        message = f"Language not supported yet: {lang}"
+        super().__init__(message)

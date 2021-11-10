@@ -1,7 +1,9 @@
 import sys
+import os
 from sfile import smartedFile
 from exceptions import *
 from var import *
+import json
 
 def main(argv, argc):
     try:
@@ -25,6 +27,8 @@ def main(argv, argc):
     is_listening = True
     inserted = ''
     cl = 1
+    langf = open(lang_file, 'r')
+    lang_list = json.load(langf)
 
     while is_listening:
         try:
@@ -57,6 +61,20 @@ def main(argv, argc):
                 except KeyboardInterrupt:
                     print()
                     insert_mode = False
+            elif command == 'r':
+                extension_l = op_file.filename.split('.')
+                extension = extension_l[len(extension_l)-1]
+                if extension in lang_list:
+                    language_name = lang_list[extension]
+                    with open(f"{lang_dir}/{language_name}.json", 'r') as lf:
+                        language = json.load(lf)
+                    if language["isCompiled"]:
+                        pass
+                    if language["isInterpreted"]:
+                        interpreter = language["interpreter"]
+                        os.system(f"{interpreter} {op_file.filename}")
+                else:
+                    raise LanguageNotSupported(extension)
             elif command == 'q':
                 if inserted == '':
                     break
@@ -73,6 +91,8 @@ def main(argv, argc):
                 print(help_txt)
             else:
                 raise CommandError
+        except LanguageNotSupported as langerr:
+            print(langerr, file=sys.stderr)
         except CommandError as cerr:
             print(cerr, file=sys.stderr)
         except InvalidLine as lerr:

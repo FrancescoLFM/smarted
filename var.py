@@ -1,5 +1,7 @@
 op_file = None
 c = None
+lang_dir = 'languages'
+lang_file = f'{lang_dir}/langlist.json'
 help_txt = '''--HELP--
 
 p               print
