@@ -1,11 +1,11 @@
-import sys
-import os
+import sys, os, subprocess
 from sfile import smartedFile
 from exceptions import *
 from var import *
 import json
 
 def main(argv, argc):
+    # Arg check
     try:
         if argc < 1:
             raise InvalidArgumentsError(f"Expected at least 1 argument, found {argc}")
@@ -23,12 +23,15 @@ def main(argv, argc):
         with open("a.txt", 'a+'):
             op_file = smartedFile("a.txt")
 
+    # Langpath init
+    with open(lang_file, 'r') as langf:
+        lang_list = json.load(langf)
+    
+
     print("Welcome to smarted v1.0! Press h for help")
     is_listening = True
     inserted = ''
     cl = 1
-    langf = open(lang_file, 'r')
-    lang_list = json.load(langf)
 
     while is_listening:
         try:
@@ -71,8 +74,10 @@ def main(argv, argc):
                     if language["isCompiled"]:
                         pass
                     if language["isInterpreted"]:
-                        interpreter = language["interpreter"]
-                        os.system(f"{interpreter} {op_file.filename}")
+                        if os.name == "posix":
+                            subprocess.run([language['interpreter_path']['linux'], op_file.filename])
+                        elif os.name == "nt":
+                            subprocess.run(language['interpreter_path']['windows'])
                 else:
                     raise LanguageNotSupported(extension)
             elif command == 'q':
