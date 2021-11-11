@@ -2,5 +2,6 @@
     "isCompiled": false,
     "Compiler": "",
     "isInterpreted": true,
-    "interpreter": "python"
+    "interpreter_path": {"linux": "/usr/bin/python",
+                         "windows": ""}
 }
